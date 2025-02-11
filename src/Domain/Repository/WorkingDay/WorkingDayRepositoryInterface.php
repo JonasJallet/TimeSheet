@@ -8,5 +8,7 @@ interface WorkingDayRepositoryInterface
 {
     public function save(WorkingDay $workingDay, bool $newEntity): void;
 
-    public function remove(WorkingDay $workingDay): void;
+    public function delete(WorkingDay $workingDay): void;
+
+    public function findById(int $id): ?WorkingDay;
 }

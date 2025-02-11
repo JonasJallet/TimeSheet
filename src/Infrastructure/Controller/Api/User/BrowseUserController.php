@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Controller\Api\User;
 
 use App\Application\Bus\Query\QueryBus;
-use App\Application\Query\User\ReadUser\ReadUser;
+use App\Application\Query\User\BrowseUsers\BrowseUsers;
 use App\Infrastructure\Utils\ResponseFormatter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,43 +14,31 @@ use Throwable;
 
 #[Route('users', name: 'api_user_')]
 #[OA\Tag(name: 'User')]
-final class ReadUserController extends AbstractController
+final class BrowseUserController extends AbstractController
 {
     public function __construct(
-        private readonly QueryBus $queryBus,
+        private readonly QueryBus          $queryBus,
         private readonly ResponseFormatter $responseFormatter,
     ) {
     }
 
-    #[Route('/{email}', name: 'get', methods: ['GET'])]
-    #[OA\Parameter(
-        name: 'email',
-        description: 'User email',
-        in: 'path',
-        required: true,
-        schema: new OA\Schema(type: 'string')
-    )]
+    #[Route('', name: 'browse', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
-        description: 'Returns user details'
+        description: 'Returns users list'
     )]
-    #[OA\Response(
-        response: Response::HTTP_NOT_FOUND,
-        description: 'User not found'
-    )]
-    public function read(string $email): JsonResponse
+    public function browse(): JsonResponse
     {
         try {
-            $readUser = new ReadUser();
-            $readUser->email = $email;
-            $user = $this->queryBus->ask($readUser);
+            $browseUsers = new BrowseUsers();
+            $users = $this->queryBus->ask($browseUsers);
 
             return new JsonResponse(
                 $this->responseFormatter->formatResponse(
-                    "Success.Entity.Retrieved",
+                    "Success.Entity.RetrievedList",
                     ['%entity%' => 'User'],
                     'success',
-                    $user
+                    $users
                 )
                 , Response::HTTP_OK
             );
@@ -64,4 +52,5 @@ final class ReadUserController extends AbstractController
             );
         }
     }
+
 }

@@ -2,6 +2,9 @@
 
 namespace App\Domain\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\TimeType;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 
@@ -20,14 +23,23 @@ class TimeSheet
     #[ORM\Column(type: Types::INTEGER)]
     private int $month;
 
-    #[ORM\Column(type: Types::FLOAT)]
-    private ?float $hourBalance = null;
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
+    private ?TimeType $hourBalance = null;
 
-    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $teleworkingCounter = null;
 
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $workingDays = null;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'timeSheets')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $user = null;
+
+    #[ORM\OneToMany(targetEntity: WorkingDay::class, mappedBy: 'timeSheet')]
+    private Collection $workingDays;
+
+    public function __construct()
+    {
+        $this->workingDays = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -56,37 +68,56 @@ class TimeSheet
         return $this;
     }
 
-    public function getHourBalance(): float
+    public function getHourBalance(): ?TimeType
     {
         return $this->hourBalance;
     }
 
-    public function setHourBalance(float $hourBalance): self
+    public function setHourBalance(?TimeType $hourBalance): self
     {
         $this->hourBalance = $hourBalance;
         return $this;
     }
 
-    public function getTeleworkingCounter(): int
+    public function getTeleworkingCounter(): ?int
     {
         return $this->teleworkingCounter;
     }
 
-    public function setTeleworkingCounter(int $teleworkingCounter): self
+    public function setTeleworkingCounter(?int $teleworkingCounter): self
     {
         $this->teleworkingCounter = $teleworkingCounter;
 
         return $this;
     }
 
-    public function getWorkingDays(): int
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        $this->user?->addTimeSheet($this);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, WorkingDay>
+     */
+    public function getWorkingDays(): Collection
     {
         return $this->workingDays;
     }
 
-    public function setWorkingDays(int $workingDays): self
+    public function addWorkingDay(WorkingDay $workingDay): self
     {
-        $this->workingDays = $workingDays;
+        if (!$this->workingDays->contains($workingDay)) {
+            $this->workingDays->add($workingDay);
+            $workingDay->setTimeSheet($this);
+        }
 
         return $this;
     }

@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Throwable;
 
-#[Route('time_sheets', name: 'api_time_sheet')]
+#[Route('time-sheets', name: 'api_time_sheet_')]
 #[OA\Tag(name: 'Time Sheet')]
 class AddTimeSheetController extends AbstractController
 {
@@ -32,17 +32,15 @@ class AddTimeSheetController extends AbstractController
         description: 'Add a new time sheet with the provided details',
         summary: 'Add a new user'
     )]
-    // #[OA\RequestBody(
-    //     required: true,
-    //     content: new OA\JsonContent(
-    //         properties: [
-    //             new OA\Property(property: 'email', type: 'string', format: 'email'),
-    //             new OA\Property(property: 'firstName', type: 'string'),
-    //             new OA\Property(property: 'lastName', type: 'string'),
-    //             new OA\Property(property: 'password', type: 'string', format: 'password')
-    //         ]
-    //     )
-    // )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'year', type: 'integer', example: 2024),
+                new OA\Property(property: 'month', type: 'integer', example: 2),
+            ]
+        )
+    )]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Time Sheet successfully created',

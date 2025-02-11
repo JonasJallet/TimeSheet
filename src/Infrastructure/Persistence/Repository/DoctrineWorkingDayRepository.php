@@ -26,9 +26,14 @@ class DoctrineWorkingDayRepository extends ServiceEntityRepository implements Wo
         $this->getEntityManager()->flush();
     }
 
-    public function remove(WorkingDay $workingDay): void
+    public function delete(WorkingDay $workingDay): void
     {
         $this->getEntityManager()->remove($workingDay);
         $this->getEntityManager()->flush();
+    }
+
+    public function findById(int $id): ?WorkingDay
+    {
+        return $this->findOneBy(['id' => $id]);
     }
 }

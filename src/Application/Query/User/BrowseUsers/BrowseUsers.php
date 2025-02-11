@@ -2,7 +2,9 @@
 
 namespace App\Application\Query\User\BrowseUsers;
 
-class BrowseUsers
+use App\Application\Bus\Query\Query;
+
+class BrowseUsers implements Query
 {
 
 }

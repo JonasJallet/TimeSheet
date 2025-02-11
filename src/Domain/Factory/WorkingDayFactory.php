@@ -2,11 +2,15 @@
 
 namespace App\Domain\Factory;
 
-use App\Domain\Entity\WorkHourDefault;
+use App\Domain\Entity\WorkingDay;
+use App\Domain\Enum\WorkingDayTypeEnum;
 use DateTime;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
-class WorkHourDefaultFactory extends PersistentProxyObjectFactory
+/**
+ * @extends PersistentProxyObjectFactory<WorkingDay>
+ */
+class WorkingDayFactory extends PersistentProxyObjectFactory
 {
     private const string MORNING_START = '08:00';
     private const string MORNING_END = '12:00';
@@ -15,16 +19,19 @@ class WorkHourDefaultFactory extends PersistentProxyObjectFactory
 
     protected function defaults(): array|callable
     {
+        $workingDayType = WorkingDayTypeEnum::tryFrom(self::faker()->randomElement(WorkingDayTypeEnum::getValues()));
+
         return [
             'morningStartTime' => DateTime::createFromFormat('H:i', self::MORNING_START),
             'morningEndTime' => DateTime::createFromFormat('H:i',self::MORNING_END),
             'afternoonStartTime' => DateTime::createFromFormat('H:i',self::AFTERNOON_START),
             'afternoonEndTime' => DateTime::createFromFormat('H:i',self::AFTERNOON_END),
+            'workingDayType' => $workingDayType,
         ];
     }
 
     public static function class(): string
     {
-        return WorkHourDefault::class;
+        return WorkingDay::class;
     }
 }

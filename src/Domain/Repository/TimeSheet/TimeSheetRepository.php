@@ -16,9 +16,9 @@ readonly class TimeSheetRepository
         return $this->timeSheetRepositoryInterface->browse();
     }
 
-    public function read(string $email): ?TimeSheet
+    public function read(int $id): ?TimeSheet
     {
-        return $this->timeSheetRepositoryInterface->findById($email);
+        return $this->timeSheetRepositoryInterface->findById($id);
     }
 
     public function edit(TimeSheet $timeSheet): void

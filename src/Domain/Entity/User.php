@@ -2,6 +2,8 @@
 
 namespace App\Domain\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -36,6 +38,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(targetEntity: WorkHourDefault::class, inversedBy: 'user')]
     private ?WorkHourDefault $defaultWorkHour = null;
+
+    #[ORM\OneToMany(targetEntity: TimeSheet::class, mappedBy: 'user')]
+    private Collection $timeSheets;
+
+    public function __construct()
+    {
+        $this->timeSheets = new ArrayCollection();
+    }
 
     public function getRoles(): array
     {
@@ -116,6 +126,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDefaultWorkHour(?WorkHourDefault $defaultWorkHour): static
     {
         $this->defaultWorkHour = $defaultWorkHour;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TimeSheet>
+     */
+    public function getTimeSheets(): Collection
+    {
+        return $this->timeSheets;
+    }
+
+    public function addTimeSheet(TimeSheet $timeSheet): self
+    {
+        if (!$this->timeSheets->contains($timeSheet)) {
+            $this->timeSheets->add($timeSheet);
+            $timeSheet->setUser($this);
+        }
 
         return $this;
     }

@@ -5,7 +5,9 @@ namespace App\Application\Query\User\BrowseUsers;
 use App\Application\Bus\Query\QueryHandler;
 use App\Application\Query\User\UserResponse;
 use App\Domain\Repository\User\UserRepository;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler]
 readonly class BrowseUsersHandler implements QueryHandler
 {
     public function __construct(

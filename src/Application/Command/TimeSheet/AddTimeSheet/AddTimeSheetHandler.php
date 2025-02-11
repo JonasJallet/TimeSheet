@@ -19,6 +19,7 @@ final readonly class AddTimeSheetHandler implements CommandHandler
     {
         $timeSheet = $addTimeSheet->toEntity();
         $this->timeSheetRepository->add($timeSheet);
+        $addTimeSheet->id = $timeSheet->getId();
     }
 
 }

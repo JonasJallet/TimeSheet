@@ -1,15 +1,11 @@
 framework:
     messenger:
         default_bus: command.bus
-        buses:
+        buses:           
             command.bus:
                 middleware:
                     - validation
-                    # - doctrine_transaction
+                    - 'App\Application\Bus\Middleware\MapToEntityMiddleware'
             query.bus:
                 middleware:
                     - validation
-            # event.bus:
-            #     default_middleware: allow_no_handlers
-            #     middleware:
-            #         - validation

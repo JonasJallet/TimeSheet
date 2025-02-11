@@ -29,7 +29,11 @@ class WorkingDay
     private ?DateTime $afternoonEndTime = null;
 
     #[ORM\Column(type: Types::STRING, enumType: WorkingDayTypeEnum::class)]
-    private ?WorkingDayTypeEnum $workingDayTypeEnum = null;
+    private ?WorkingDayTypeEnum $workingDayType = null;
+
+    #[ORM\ManyToOne(targetEntity: TimeSheet::class, inversedBy: 'workingDays')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?TimeSheet $timeSheet = null;
 
     public function getId(): ?int
     {
@@ -80,14 +84,27 @@ class WorkingDay
         return $this;
     }
 
-    public function getWorkingDayTypeEnum(): ?WorkingDayTypeEnum
+    public function getWorkingDayType(): ?WorkingDayTypeEnum
     {
-        return $this->workingDayTypeEnum;
+        return $this->workingDayType;
     }
 
-    public function setWorkingDayTypeEnum(?WorkingDayTypeEnum $workingDayTypeEnum): self
+    public function setWorkingDayType(?WorkingDayTypeEnum $workingDayType): self
     {
-        $this->workingDayTypeEnum = $workingDayTypeEnum;
+        $this->workingDayType = $workingDayType;
+
+        return $this;
+    }
+
+    public function getTimeSheet(): ?TimeSheet
+    {
+        return $this->timeSheet;
+    }
+
+    public function setTimeSheet(?TimeSheet $timeSheet): self
+    {
+        $this->timeSheet = $timeSheet;
+        $this->timeSheet?->addWorkingDay($this);
 
         return $this;
     }
